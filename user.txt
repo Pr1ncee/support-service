@@ -1,0 +1,12 @@
+princ
+123n5678
+sUpportS1erivce
+
+u = User.objects
+t = Ticket.objects
+
+u.get(id=1).ticket_set.create(message='Test1')
+
+t.get(id=1).user_data
+
+<input type="hidden"  value="{% url 'users:index' %}" />
