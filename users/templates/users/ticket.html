@@ -1,0 +1,12 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+
+<p>Write a question below:</p>
+<form action="{% url 'users:new_ticket' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name="submit">Submit</button>
+</form>
+
+{% endblock content %}

@@ -1,0 +1,7 @@
+<form action="{% url 'registration:register' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button>Register</button>
+    <input type="hidden" value="{% url 'users:index' %}" />
+</form>

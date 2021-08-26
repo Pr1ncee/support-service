@@ -1,0 +1,14 @@
+<h1 align="center">Support service</h1>
+<br>
+<h3 align="center">Welcome to our Support Service! We are always glad to answer Your questions!</h3>
+<br>
+{% if user.is_authenticated %}
+  <p align="center">Hello, <b>{{ user.username }}</b></p>
+  <p align="center"><a href="{% url 'users:new_ticket' %}"><b>Ask a question</b></a> -
+    <a href="{% url 'users:messages' %}"><b>Messages</b></a> -
+    <a href="{% url 'users:answers' %}"><b>Answers</b></a> -
+    <a href="{% url 'users:log_out' %}">Log out</a>
+
+{% else %}
+  <p align="center"><a href="{% url 'registration:login' %}"><b>Log in</b></a> to write us a message.</p>
+{% endif %}

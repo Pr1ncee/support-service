@@ -1,0 +1,18 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+
+<p>Your messages:</p>
+<ul>
+    {% for message in messages %}
+      <li>
+          <p>{{ message }}</p>
+          <p>{{ message.added_time }}</p>
+          <p><a href="{% url 'users:record_delete' message.id %}">Delete</a></p>
+      </li>
+    {% empty %}
+      <li>You have no messages yet.</li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}

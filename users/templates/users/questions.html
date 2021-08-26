@@ -1,0 +1,14 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+
+{% for ticket in tickets %}
+  <h3>{{ ticket.user_data }}</h3>
+  <h4>{{ ticket }}</h4>
+  <p><a href="{% url 'users:feedback' ticket.id %}">Answer</a></p>
+  <br>
+{% empty %}
+  <p>No questions has sent.</p>
+{% endfor %}
+
+{% endblock content %}

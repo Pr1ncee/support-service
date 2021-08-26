@@ -1,0 +1,11 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+
+{% for answer in answers %}
+  {{ answer }}
+{% empty %}
+  <p>You have no messages yet</p>
+{% endfor %}
+
+{% endblock content %}
