@@ -3,9 +3,12 @@
 {% block content %}
 
 {% for answer in answers %}
-  {{ answer }}
+  <p><b>{{ answer }}</b></p>
+  <ul>
+    <li>{{ answer.question }}</li>
+  </ul>
 {% empty %}
-  <p>You have no messages yet</p>
+  <p>You have no messages yet.</p>
 {% endfor %}
 
 {% endblock content %}

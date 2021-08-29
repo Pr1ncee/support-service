@@ -1,0 +1,25 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+
+<p>You are replying to <b>{{ user_name }}</b></p>
+{% if ticket|length > 50 %}
+  <p><b>{{ ticket|slice:":50" }}</b></p>
+{% else %}
+  <p><b>{{ ticket }}</b></p>
+{% endif %}
+<form action="{% url 'users:feedback' ticket.id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name="submit">Submit</button>
+</form>
+<br>
+{% if prev_ans %}
+  <h3>The previous answers are:</h3>
+  {% for answer in prev_ans %}
+    <p><b>{{ answer }}</b></p>
+  {% endfor %}
+{% else %}
+{% endif %}
+
+{% endblock content %}

@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 
 class Ticket(models.Model):
@@ -11,3 +11,12 @@ class Ticket(models.Model):
 
     def __str__(self):
         return self.message
+
+
+class Answer(models.Model):
+    answer = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+    question = models.ForeignKey(Ticket, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.answer

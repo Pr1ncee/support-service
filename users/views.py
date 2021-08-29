@@ -2,8 +2,8 @@ from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 
-from .forms import TicketForm
-from .models import Ticket
+from .forms import TicketForm, AnswerForm
+from .models import Ticket, Answer
 
 
 def index(request):
@@ -39,7 +39,7 @@ def gratitude_words(request):
     return render(request, 'users/gratitude_words.html')
 
 
-def messages(request):
+def messages(request, message_id=0):
     message = Ticket.objects.filter(user_data=request.user.id).order_by('-added_date')
 
     context = {'messages': message}
@@ -53,24 +53,19 @@ def record_delete(request, message_id):
     except ObjectDoesNotExist:
         pass
 
-    message = Ticket.objects.filter(user_data=request.user.id).order_by('-added_date')
-
-    context = {"messages": message}
-    return render(request, 'users/messages.html', context)
+    return redirect('messages.html')
 
 
-def answer(request, message_id=None, user_id=None):
-    if request.method != 'POST':
-        answer_ = []  # Рендерим страницу, если первое обращение
-    else:
-        answer_ = []  # Загружаем ответ пользователю в ДБ
+def answer(request):
+    answer_instance = Answer.objects
+    answers = []
 
-    context = {'answers': answer_}
+    for answer_ in answer_instance.all():
+        if answer_.question.user_data == request.user:
+            answers.append(answer_)
+
+    context = {'answers': answers}
     return render(request, 'users/answers.html', context)
-
-
-def staff_page(request):
-    return render(request, 'users/staff_page.html')
 
 
 def questions(request):
@@ -81,4 +76,30 @@ def questions(request):
 
 
 def feedback(request, ticket_id):
-    return redirect('users:index')
+    instance = Ticket.objects
+    ticket = instance.get(id=ticket_id)
+    user_name = ticket.user_data
+    answers = Answer.objects
+    prev_ans = []
+
+    if request.method != 'POST':
+        form = AnswerForm()
+
+    else:
+        form = AnswerForm(data=request.POST)
+
+        if form.is_valid():
+            answer_ = form.save(commit=False)
+            answer_.question = ticket
+            answer_.save()
+            return redirect('questions.html')
+
+    for reply in answers.order_by('-date_added'):
+        if reply.question.id == ticket_id:
+            prev_ans.append(reply)
+
+    context = {'form': form,
+               'ticket': ticket,
+               'user_name': user_name,
+               'prev_ans': prev_ans}
+    return render(request, 'users/reply.html', context)
