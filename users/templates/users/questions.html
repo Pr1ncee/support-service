@@ -3,8 +3,27 @@
 {% block content %}
 
 {% for ticket in tickets %}
+  {% if ticket.status == 'solved' %}
+    <p><font color="#006400" size="4"><b>{{ ticket.status|capfirst }}</b></font></p>
+  {% elif ticket.status == 'unsolved' %}
+    <p><font color="#DC143C" size="4"><b>{{ ticket.status|capfirst }}</b></font></p>
+  {% else %}
+    <p><font color="#00CED1" size="4"><b>{{ ticket.status|capfirst }}</b></font></p>
+  {% endif %}
   <h3>{{ ticket.user_data }}</h3>
   <h4>{{ ticket }}</h4>
+  <form action="{% url 'users:questions_1' ticket.id %}" method="post">
+  {% csrf_token %}
+    <input type="radio" name="choice" value="solved"/>
+    <font color="#006400"><label>Solved</label></font>
+    <input type="radio" name="choice" value="unsolved" />
+    <font color="#DC143C"><label>Unsolved</label></font>
+    <input type="radio" name="choice" value="frozen"/>
+    <font color="#00CED1"><label>Frozen</label></font>
+    <br>
+    <br>
+<input type="submit" value="Set"/>
+</form>
   <p>
     <a href="{% url 'users:feedback' ticket.id %}">Answer</a>
   </p>

@@ -1,6 +1,7 @@
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.datastructures import MultiValueDictKeyError
 
 from .forms import TicketForm, AnswerForm
 from .models import Ticket, Answer
@@ -39,7 +40,7 @@ def gratitude_words(request):
     return render(request, 'users/gratitude_words.html')
 
 
-def messages(request, message_id=0):
+def messages(request):  # message_id=0
     message = Ticket.objects.filter(user_data=request.user.id).order_by('-added_date')
 
     context = {'messages': message}
@@ -60,15 +61,25 @@ def answer(request):
     answer_instance = Answer.objects
     answers = []
 
-    for answer_ in answer_instance.all():
-        if answer_.question.user_data == request.user:
-            answers.append(answer_)
+    for ans in answer_instance.order_by('-date_added'):
+        if ans.question.user_data == request.user:
+            answers.append(ans)
 
     context = {'answers': answers}
     return render(request, 'users/answers.html', context)
 
 
-def questions(request):
+def questions(request, ticket_id=0):
+    if request.method == 'POST':
+        try:
+            choice = request.POST['choice']
+
+            ticket = Ticket.objects.get(id=ticket_id)
+            ticket.status = choice
+            ticket.save()
+        except MultiValueDictKeyError:
+            pass
+
     tickets = Ticket.objects.order_by('-added_date')
 
     context = {'tickets': tickets}
