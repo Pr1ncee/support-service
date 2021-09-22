@@ -6,8 +6,13 @@ from django.utils.datastructures import MultiValueDictKeyError
 from .forms import TicketForm, AnswerForm
 from .models import Ticket, Answer
 
+#TODO Сделать правильную авторизацию персонала.
+
 
 def index(request):
+    """
+    Временное решение авторизации персонала - проверка по id
+    """
     if request.user.id == 1:
         return render(request, 'users/staff_page.html')
 
@@ -20,6 +25,10 @@ def log_out(request):
 
 
 def new_ticket(request):
+    """
+    Если метод GET, просто рендерит страницу с формой.
+    Если метод POST, проверяет валидность данных, сохраняет их и перенаправляет пользователя.
+    """
     if request.method != 'POST':
         form = TicketForm()
 
@@ -40,7 +49,10 @@ def gratitude_words(request):
     return render(request, 'users/gratitude_words.html')
 
 
-def messages(request):  # message_id=0
+def messages(request, message_id=0):
+    """
+    Выводит список тикетов, отправленных пользователем.
+    """
     message = Ticket.objects.filter(user_data=request.user.id).order_by('-added_date')
 
     context = {'messages': message}
@@ -48,6 +60,9 @@ def messages(request):  # message_id=0
 
 
 def record_delete(request, message_id):
+    """
+    Удаляет тикет по решению пользователя.
+    """
     try:
         record = Ticket.objects.get(id=message_id)
         record.delete()
@@ -58,6 +73,9 @@ def record_delete(request, message_id):
 
 
 def answer(request):
+    """
+    Загружает ответы и тикеты, на которые ответил саппорт.
+    """
     answer_instance = Answer.objects
     answers = []
 
@@ -70,6 +88,10 @@ def answer(request):
 
 
 def questions(request, ticket_id=0):
+    """
+    Если метод POST, меняет статус тикета (решенный, нерешенный, замороженный).
+    Выводит тикеты пользователей.
+    """
     if request.method == 'POST':
         try:
             choice = request.POST['choice']
@@ -87,11 +109,16 @@ def questions(request, ticket_id=0):
 
 
 def feedback(request, ticket_id):
-    instance = Ticket.objects
-    ticket = instance.get(id=ticket_id)
-    user_name = ticket.user_data
+    """
+    Если метод GET, рендерит страницу с формой, иначе проверяет валидность данных и записывает в БД.
+    """
+    tickets = Ticket.objects
     answers = Answer.objects
-    prev_ans = []
+
+    ticket = tickets.get(id=ticket_id)
+    user_name = ticket.user_data
+
+    prev_ans = []  # Список с ответами, если саппорт ранее обрабатывал тикет.
 
     if request.method != 'POST':
         form = AnswerForm()
@@ -101,7 +128,7 @@ def feedback(request, ticket_id):
 
         if form.is_valid():
             answer_ = form.save(commit=False)
-            answer_.question = ticket
+            answer_.question = ticket  # Привязывает ответ к соответствующему тикету.
             answer_.save()
             return redirect('questions.html')
 

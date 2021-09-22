@@ -2,24 +2,36 @@
 
 {% block content %}
 
+{% if ticket.status == 'solved' %}
+    <p><font color="#006400" size="4"><b>{{ ticket.status|capfirst }}</b></font></p>
+  {% elif ticket.status == 'unsolved' %}
+    <p><font color="#DC143C" size="4"><b>{{ ticket.status|capfirst }}</b></font></p>
+  {% else %}
+    <p><font color="#00CED1" size="4"><b>{{ ticket.status|capfirst }}</b></font></p>
+  {% endif %}
+
 <p>You are replying to <b>{{ user_name }}</b></p>
+
 {% if ticket|length > 50 %}
   <p><b>{{ ticket|slice:":50" }}</b></p>
 {% else %}
   <p><b>{{ ticket }}</b></p>
 {% endif %}
+
 <form action="{% url 'users:feedback' ticket.id %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button name="submit">Submit</button>
 </form>
 <br>
+
 {% if prev_ans %}
   <h3>The previous answers are:</h3>
+
   {% for answer in prev_ans %}
     <p><b>{{ answer }}</b></p>
   {% endfor %}
-{% else %}
+
 {% endif %}
 
 {% endblock content %}

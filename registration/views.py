@@ -5,6 +5,9 @@ from django.views.generic import View
 
 
 def register(request):
+    """
+    Использует встроенную форму регистрации Django.
+    """
     if request.method != 'POST':
         form = UserCreationForm()
     else:
@@ -17,17 +20,3 @@ def register(request):
 
     context = {'form': form}
     return render(request, 'registration/register.html', context)
-
-
-def my_view(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    context = {}
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        context['username'] = username
-        context['password'] = password
-        login(request, user)
-        return redirect('users:index', username, password)
-    else:
-        raise ValueError

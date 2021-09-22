@@ -2,6 +2,7 @@
 <br>
 <h3 align="center">Welcome to our Support Service! We are always glad to answer Your questions!</h3>
 <br>
+
 {% if user.is_authenticated %}
   <p align="center">Hello, <b>{{ user.username }}</b></p>
   <p align="center"><a href="{% url 'users:new_ticket' %}"><b>Ask a question</b></a> -
